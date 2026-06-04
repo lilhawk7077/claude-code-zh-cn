@@ -6,6 +6,19 @@
 - **次版本号**：新增功能或显著改进（比如新增 patch、新增翻译）
 - **修订号**：Bug 修复和小调整（比如修正一条翻译）
 
+## [2.4.43] - 2026-06-04
+
+### 修复
+
+- 卸载脚本现在会清理本插件写入的 `enabledPlugins`、`extraKnownMarketplaces` 和 settings hooks，避免卸载后 Claude Code 继续尝试执行已删除的 Hook。
+- 兼容 `${CLAUDE_PLUGIN_ROOT}/hooks/...` 这类插件随包 Hook 占位符，并让 Bash / PowerShell 的 `jq` fallback 使用同一清理范围。
+
+### 验证
+
+- `node --test tests/node-only-runtime.test.js tests/install-json-helper.test.js`
+- `bash scripts/preflight.sh --skip-release-state`
+- `CI workflow 26928293326`
+
 ## [2.4.42] - 2026-06-03
 
 ### 改进
