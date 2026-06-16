@@ -456,6 +456,237 @@ test("dynamic effort help description is translated while preserving choices exp
   );
 });
 
+test("effort picker and dynamic workflow UI residues are translated without changing option values", () => {
+  const patched = patchFixture([
+    'const effortTitle="Effort";',
+    'const effortScale=["Faster","Smarter","xhigh + workflows"];',
+    'const effortFooter="←/→ to adjust · Enter to confirm · Esc to cancel";',
+    'const effortFooterTemplate=co.useMemo(()=>`${R2H([jp("left"),jp("right")])} to adjust \\xB7 ${R2H([jp("enter")])} to confirm \\xB7 ${R2H([jp("escape")])} to cancel`,[]);',
+    'const effortFooterComponent=Nq.createElement(G6,null,Nq.createElement(K_,{chord:["left","right"],action:"adjust"}),Nq.createElement(K_,{chord:"enter",action:"confirm"}),Nq.createElement(K_,{chord:"escape",action:"cancel"}));',
+    'const effortUsage=`Usage: /effort [low|medium|high|xhigh|max${extra}|auto] Effort levels: - low: Quick, straightforward implementation - medium: Balanced approach with standard testing - high: Comprehensive implementation with extensive testing - xhigh: Extended reasoning with thorough analysis (${xhighNote}) - max: Maximum capability with deepest reasoning (${maxNote})`;',
+    'const ultracode="- ultracode: xhigh + dynamic workflow orchestration (this session only)";',
+    'const auto="- auto: Use the default effort level for your model";',
+    'const lowDescription="Quick, straightforward implementation with minimal overhead";',
+    'const mediumDescription="Balanced approach with standard implementation and testing";',
+    'const highDescription="Comprehensive implementation with extensive testing and documentation";',
+    'const xhighDescription=`Deeper reasoning than high, just below maximum (${note})`;',
+    'const maxDescription=`Maximum capability with deepest reasoning. ${note}`;',
+    'const effortPrompt="Change effort level?";',
+    'const effortCurrent=`Current effort level: ${level} (${source})`;',
+    'const effortAuto=`Effort level: auto (currently ${level})`;',
+    'const effortFailed=`Failed to set effort level: ${message}`;',
+    'const workflowTitle="Dynamic workflows";',
+    'const workflowLoading="Loading dynamic workflow history\\u2026";',
+    'const workflowEmpty="No dynamic workflows in this session.";',
+    'const workflowDismissed="Dynamic workflows dialog dismissed";',
+    'const workflowReview="Review dynamic workflow before running";',
+    'const workflowAsk="Run a dynamic workflow?";',
+    'const workflowSummary="View workflow summary";',
+    'const workflowScript="View raw script";',
+    'const workflowTokenA="Dynamic workflows can use a lot of tokens quickly by running many";',
+    'const workflowTokenB="subagents in parallel \\u2014 which counts against your usage limit. Stop a";',
+    'const workflowTokenC="running workflow at any time with /workflows, or disable dynamic workflows in /config.";',
+    'const workflowSave="Save dynamic workflow";',
+    'const workflowLaunched=`Workflow launched in background. Task ID: ${taskId}${summary}${transcript}${script}${runId} You will be notified when it completes. Use /workflows to watch live progress.`;',
+    'const workflowLaunchedWithBreaks=`Workflow launched in background. Task ID: ${taskId}${summary}${transcript}${script}${runId}\\n\\nYou will be notified when it completes. Use /workflows to watch live progress.`;',
+    'const workflowStop="x stop workflow";',
+    'const workflowViewRuns="to view dynamic workflow runs";',
+    'const workflowClose=VO.createElement(K_,{chord:"escape",action:"close"});',
+    'const workflowDefaultClose=qT.default.createElement(K_,{chord:"escape",action:"close"});',
+    'const workflowDisabled="Dynamic workflows are disabled by managed settings (`disableWorkflows`).";',
+    'const workflowUnavailable="Dynamic workflows are not enabled for this session (org policy, launch gate, or the \\"Dynamic workflows\\" setting in /config).";',
+    'const workflowConflict="Workflow file conflict";',
+    'const workflowFile="The file .github/workflows/claude.yml already exists";',
+    'const creatingPlural="Creating workflow files";',
+    'const creatingSingle="Creating workflow file";',
+    "",
+  ]);
+
+  for (const residue of [
+    "Faster",
+    "Smarter",
+    "xhigh + workflows",
+    "to adjust",
+    "to confirm",
+    'action:"adjust"',
+    'action:"confirm"',
+    'action:"cancel"',
+    "Usage: /effort",
+    "Quick, straightforward implementation",
+    "Balanced approach with standard implementation",
+    "Balanced approach with standard testing",
+    "Comprehensive implementation with extensive testing",
+    "Extended reasoning with thorough analysis",
+    "Deeper reasoning than high",
+    "Maximum capability with deepest reasoning",
+    "Use the default effort level",
+    "Change effort level?",
+    "Current effort level",
+    "Effort level: auto",
+    "Failed to set effort level",
+    "Dynamic workflows",
+    "Loading dynamic workflow history",
+    "No dynamic workflows in this session.",
+    "Review dynamic workflow before running",
+    "Run a dynamic workflow?",
+    "View workflow summary",
+    "View raw script",
+    "Dynamic workflows can use a lot of tokens quickly",
+    "subagents in parallel",
+    "Save dynamic workflow",
+    "Workflow launched in background",
+    "x stop workflow",
+    "to view dynamic workflow runs",
+    'action:"close"',
+    "Workflow file conflict",
+    "Creating workflow file",
+  ]) {
+    assert.equal(patched.includes(residue), false, `raw residue remained: ${residue}\n${patched}`);
+  }
+
+  assert.match(patched, /思考强度/);
+  assert.match(patched, /更快/);
+  assert.match(patched, /更强/);
+  assert.match(patched, /\$\{R2H\(\[jp\("left"\),jp\("right"\)\]\)\} 调整 · \$\{R2H\(\[jp\("enter"\)\]\)\} 确认 · \$\{R2H\(\[jp\("escape"\)\]\)\} 取消/);
+  assert.match(patched, /←\/→ 调整 · Enter 确认 · Esc 取消/);
+  assert.match(patched, /xhigh \+ 工作流/);
+  assert.match(patched, /low\|medium\|high\|xhigh\|max\$\{extra\}\|auto/);
+  assert.match(patched, /- ultracode：xhigh \+ 动态工作流编排（仅本次会话）/);
+  assert.match(patched, /快速、直接的实现，额外开销最小/);
+  assert.match(patched, /快速、直接的实现/);
+  assert.match(patched, /均衡处理，包含标准实现和测试/);
+  assert.match(patched, /更完整的实现，包含充分测试和文档/);
+  assert.match(patched, /思考强度：/);
+  assert.match(patched, /均衡处理，包含常规测试/);
+  assert.match(patched, /扩展推理，做更彻底的分析/);
+  assert.match(patched, /比 high 更深入的推理，仅次于 max（\$\{note\}）/);
+  assert.match(patched, /最大能力，进行最深度推理。\$\{note\}/);
+  assert.match(patched, /动态工作流/);
+  assert.match(patched, /正在加载动态工作流历史…/);
+  assert.match(patched, /运行前查看动态工作流/);
+  assert.match(patched, /工作流已在后台启动。任务 ID：\$\{taskId\}/);
+  assert.match(patched, /用 \/workflows 查看实时进度。/);
+  assert.match(patched, /Esc 关闭/);
+  assert.doesNotMatch(patched, /\."Esc 关闭"/);
+  assert.match(patched, /动态工作流已被托管设置/);
+  assert.match(patched, /工作流文件冲突/);
+});
+
+test("shared visible footer residues are localized without changing unrelated action values", () => {
+  const patched = patchFixture([
+    'const trustFooter=QE.default.createElement(G6,null,QE.default.createElement(K_,{chord:"enter",action:"confirm"}),QE.default.createElement(K_,{chord:"escape",action:"cancel"}));',
+    'const confirmationFooter=lj.default.createElement(G6,null,lj.default.createElement(K_,{chord:"enter",action:"confirm"}),lj.default.createElement(w8,{action:"confirm:no",context:"Confirmation",fallback:"Esc",description:"cancel"}));',
+    'const agentsFooter=D8.createElement(V,{dimColor:!0},Ll," ",z?"again ":"","for agents");',
+    'const bgAgentsFooter=D8.createElement(V,{dimColor:!0,key:"bg-detach"},Ll," for agents");',
+    'const cancelled="Cancelled";',
+    'const internalAction={action:"cancel"};',
+    "",
+  ]);
+
+  for (const residue of [
+    "to confirm",
+    "to cancel",
+    '"for agents"',
+    '" for agents"',
+    '"again "',
+    '"Cancelled"',
+  ]) {
+    assert.equal(patched.includes(residue), false, `raw residue remained: ${residue}\n${patched}`);
+  }
+
+  assert.match(patched, /Enter 确认/);
+  assert.match(patched, /Esc 取消/);
+  assert.match(patched, /"再次 "/);
+  assert.match(patched, /"查看 Agent"/);
+  assert.match(patched, /" 查看 Agent"/);
+  assert.match(patched, /"已取消"/);
+  assert.match(patched, /action:"cancel"/);
+});
+
+test("dynamic workflow lifecycle and progress residues are translated safely", () => {
+  const patched = patchFixture([
+    'const workflowDefault="Dynamic workflow";',
+    'const syntaxError=`Workflow script has a syntax error and was not launched:\n${error}`;',
+    'const remoteLaunch=`Workflow launched in a remote CCR session. Task ID: ${taskId}\nSession: ${sessionUrl}\n`;',
+    'const remoteNote=`\nThe workflow runs against a fresh clone of the pushed branch; phase progress is visible at the session URL, not in /workflows. You will be notified when it completes.`;',
+    'const remoteSummary=`Summary: ${summary}\n`;',
+    'const remoteWarning=`Warning: ${warning}\n`;',
+    'const launchSummary=`\nSummary: ${summary}`;',
+    'const transcriptDir=`\nTranscript dir: ${transcriptDir}`;',
+    'const scriptFile=`\nScript file: ${scriptPath}\n(Edit this file with Write/Edit and re-invoke Workflow with {scriptPath: "${scriptPath}"} to iterate without resending the script.)`;',
+    'const runId=`\nRun ID: ${runId}\nTo resume after editing the script: Workflow({scriptPath: "${scriptPath}", resumeFromRunId: "${runId}"}) \\u2014 completed agents return cached results.`;',
+    'const completed=`Dynamic workflow "${name}" completed`;',
+    'const failed=`Dynamic workflow "${name}" failed: ${error||"Unknown error"}`;',
+    'const stopped=`Dynamic workflow "${name}" was stopped`;',
+    "const resume=`To resume after editing the script, call: Workflow({scriptPath: '${scriptPath}', resumeFromRunId: '${runId}'${args}})`;",
+    "const paused=`Resume the paused workflow by calling: Workflow({scriptPath: '${scriptPath}', resumeFromRunId: '${runId}'${args}}) \\u2014 completed agents return cached results.`;",
+    'const transcripts=`Agent transcripts: ${transcriptDir}`;',
+    'const saved=`Dynamic workflow saved to ${path}. Invoke as /${name} or Workflow({name: "${name}"}) in future sessions.`;',
+    'const exists=`Dynamic workflow "${name}" already exists at ${path}. Use a different name or overwrite.`;',
+    'const inProgress=`${running} in progress`;',
+    'const pending=`${pending} pending`;',
+    'const completedCount=`${done} completed`;',
+    'const taskText=" tasks ("+done+" done, "+running+" in progress, "+open+" open)";',
+    'const active=`Dynamic workflow requested for this turn${HO?` \\xB7 ${HO} to ignore`:""}`;',
+    'const ignored=`Ultracode keyword ignored for this prompt${HO?` \\xB7 ${HO} to undo`:""}`;',
+    "",
+  ]);
+
+  for (const residue of [
+    '"Dynamic workflow"',
+    "Workflow script has a syntax error",
+    "remote CCR session",
+    "phase progress is visible",
+    "Summary:",
+    "Warning:",
+    "Transcript dir:",
+    "Script file:",
+    "Edit this file with Write/Edit",
+    "Run ID:",
+    "To resume after editing the script",
+    "Resume the paused workflow",
+    "completed agents return cached results",
+    "Agent transcripts:",
+    "Dynamic workflow saved",
+    "Use a different name or overwrite",
+    "` in progress`",
+    "` pending`",
+    "` completed`",
+    " done, ",
+    " open)",
+    "to ignore",
+    "to undo",
+  ]) {
+    assert.equal(patched.includes(residue), false, `raw residue remained: ${residue}\n${patched}`);
+  }
+
+  assert.match(patched, /动态工作流/);
+  assert.match(patched, /工作流脚本存在语法错误，未启动/);
+  assert.match(patched, /远程 CCR 会话中的工作流已启动。任务 ID：\$\{taskId\}/);
+  assert.match(patched, /阶段进度可在会话 URL 查看，不在 \/workflows 中显示/);
+  assert.match(patched, /摘要：\$\{summary\}/);
+  assert.match(patched, /警告：\$\{warning\}/);
+  assert.match(patched, /transcript 目录：\$\{transcriptDir\}/);
+  assert.match(patched, /脚本文件：\$\{scriptPath\}/);
+  assert.match(patched, /Workflow\(\{scriptPath: "\$\{scriptPath\}"\}\)/);
+  assert.match(patched, /运行 ID：\$\{runId\}/);
+  assert.match(patched, /resumeFromRunId: "\$\{runId\}"/);
+  assert.match(patched, /动态工作流 "\$\{name\}" 已完成/);
+  assert.match(patched, /动态工作流 "\$\{name\}" 失败：\$\{error\|\|"Unknown error"\}/);
+  assert.match(patched, /动态工作流 "\$\{name\}" 已停止/);
+  assert.match(patched, /Workflow\(\{scriptPath: '\$\{scriptPath\}', resumeFromRunId: '\$\{runId\}'\$\{args\}\}\)/);
+  assert.match(patched, /Agent 记录：\$\{transcriptDir\}/);
+  assert.match(patched, /动态工作流已保存到 \$\{path\}/);
+  assert.match(patched, /请使用其他名称或覆盖/);
+  assert.match(patched, /\$\{running\} 进行中/);
+  assert.match(patched, /\$\{pending\} 待处理/);
+  assert.match(patched, /\$\{done\} 已完成/);
+  assert.match(patched, / 个任务（/);
+  assert.match(patched, / 未完成）/);
+  assert.match(patched, /本轮已请求动态工作流\$\{HO\?` · \$\{HO\} 忽略`:""\}/);
+  assert.match(patched, /已忽略本条提示词中的 Ultracode 关键词\$\{HO\?` · \$\{HO\} 撤销`:""\}/);
+});
+
 test("issue 80 slash command menu residues are translated", () => {
   const patched = patchFixture([
     'const exitDescription="Exit the CLI";',
